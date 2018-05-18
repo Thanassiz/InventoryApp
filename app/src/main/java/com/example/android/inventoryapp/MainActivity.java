@@ -131,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @OnClick(R.id.fab_shop)
     void onClickShop() {
 
-        //TODO: intent DATA
         Cursor cursor = cursorAdapter.getCursor();
         List<ShirtViewModel> list = cursorAdapter.fromCursor(cursor);
         ArrayList<String> selectedItems = new ArrayList<>();
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         for (int position = 0; position < cursorAdapter.getItemCount(); position++) {
             ShirtViewModel item = list.get(position);
             boolean isChecked = booleanArray.get(position);
-
+            Log.e(TAG, "cursor id: " + item.getId());
             if (item != null && isChecked) {
                 long id = item.getId();
                 isSelected = true;
