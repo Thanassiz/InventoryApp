@@ -1,0 +1,46 @@
+<resources>
+    <!-- Activity Labels -->
+    <string name="app_name">Inventory App</string>
+    <string name="product_new_activity_label">New Product</string>
+    <string name="product_edit_activity_label">Edit Product</string>
+
+    <!-- Exceptions and Errors -->
+    <string name="exception_unknown_uri">Unknown Uri:</string>
+    <string name="exception_insert_unsupported_uri">Insertion is not supported for &#160;</string>
+    <string name="exception_invalid_product_name">Invalid product name.</string>
+    <string name="exception_invalid_product_size">Invalid product size.</string>
+    <string name="exception_invalid_price">Invalid product price.</string>
+    <string name="exception_invalid_quantity">Invalid product quantity.</string>
+    <string name="exception_invalid_supplier_name">Invalid supplier name.</string>
+    <string name="exception_invalid_supplier_phone">Invalid supplier phone number.</string>
+    <string name="error_insert_data">Failed to insert data with Uri:</string>
+    <string name="error_delete_data">Failed to delete data with Uri:</string>
+    <string name="error_update_data">Failed to update data with Uri:</string>
+    <string name="error_delete_item">Failed to delete data.</string>
+    <string name="error_update_item">Failed to update data.</string>
+    <string name="error_empty_field">Please enter the current field.</string>
+    <string name="error_insert_valid_data">Please enter valid data.</string>
+
+    <!-- UI Views -->
+    <string name="new_product_name_label">Product Name: &#160;</string>
+    <string name="new_product_price_label">Price: &#160;</string>
+    <string name="new_product_size_label">Size: &#160;</string>
+    <string name="new_product_quantity_label">Quantity: &#160;</string>
+    <string name="new_product_supplier_name_label">Supplier Name: &#160;</string>
+    <string name="new_product_supplier_phone_label">Supplier Phone: &#160;</string>
+    <string name="new_product_fields_label">All fields are required to be filled.</string>
+    <string name="new_product_add_image_label">Add Image</string>
+    <string name="available_stock_yes">Yes</string>
+    <string name="available_stock_no">No</string>
+    <string name="toast_rows_deleted">item(s) deleted.</string>
+    <string name="toast_rows_updated">item(s) updated.</string>
+
+    <!-- Description -->
+    <string name="description_thumbnail_preview">Thumbnail Preview</string>
+
+    <!-- Preferences -->
+    <string name="order_by_best_match">Best Match</string>
+    <string name="order_by_lowest">Lowest</string>
+    <string name="order_by_highest">Highest</string>
+
+</resources>

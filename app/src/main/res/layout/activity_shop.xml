@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.android.inventoryapp.MainActivity">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/shop_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/shop_bottom_layout">
+        </android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/shop_bottom_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true">
+
+    <TextView
+        android:id="@+id/total_price_label"
+        android:text="Total price:&#160;"
+        android:padding="@dimen/small"
+        android:textSize="@dimen/textSize_large"
+        android:textColor="@android:color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/total_price_value"
+            tools:text="0"
+            android:padding="@dimen/small"
+            android:textSize="@dimen/textSize_large"
+            android:textColor="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="$"
+            android:padding="@dimen/small"
+            android:textSize="@dimen/textSize_large"
+            android:textColor="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/buy_button"
+        android:text="buy"
+        android:layout_marginLeft="@dimen/medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    </LinearLayout>
+</RelativeLayout>
