@@ -126,11 +126,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     /**
-     * Go to product activity, no uri provided.
+     * Go to product activity, passing the selected ids
      */
     @OnClick(R.id.fab_shop)
     void onClickShop() {
-
         Cursor cursor = cursorAdapter.getCursor();
         List<ShirtViewModel> list = cursorAdapter.fromCursor(cursor);
         ArrayList<String> selectedItems = new ArrayList<>();
@@ -151,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             Toast toast = Toast.makeText(this, "No item selected.", Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
-        }else {
+        } else {
             Intent intent = new Intent(MainActivity.this, ShopActivity.class);
             intent.putStringArrayListExtra("selected_list", selectedItems);
             startActivity(intent);
@@ -295,9 +294,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         }};
         spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerList));
         String preference = Utilities.retrieveOrderByPreference(this);
-        for (int i = 0; i < spinnerList.size(); i++) {
-            if (preference.contentEquals(spinnerList.get(i))) {
-                spinner.setSelection(i);
+        if (!Utilities.isEmptyString(preference)) {
+            for (int i = 0; i < spinnerList.size(); i++) {
+                if (preference.contentEquals(spinnerList.get(i))) {
+                    spinner.setSelection(i);
+                }
             }
         }
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

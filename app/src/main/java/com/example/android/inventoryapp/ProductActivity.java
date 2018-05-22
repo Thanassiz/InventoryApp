@@ -215,7 +215,7 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             } else {
                 int intSize = Integer.parseInt(size);
                 if (intSize < 0 || intSize > 4) {
-                    sizeEditText.setError(getString(R.string.error_insert_valid_data));
+                    sizeEditText.setError(getString(R.string.error_invalid_size_input));
                     return false;
                 }
             }

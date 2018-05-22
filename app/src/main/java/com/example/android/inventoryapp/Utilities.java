@@ -55,4 +55,9 @@ public class Utilities {
         SharedPreferences preferences = context.getSharedPreferences(TAG, Context.MODE_PRIVATE);
         return preferences.getString(ORDER_BY_KEY, null);
     }
+
+    public static boolean isEmptyString(String stringToCheck) {
+        return (stringToCheck == null || stringToCheck.trim().length() == 0);
+    }
+
 }

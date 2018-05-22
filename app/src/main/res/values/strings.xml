@@ -20,6 +20,7 @@
     <string name="error_update_item">Failed to update data.</string>
     <string name="error_empty_field">Please enter the current field.</string>
     <string name="error_insert_valid_data">Please enter valid data.</string>
+    <string name="error_invalid_size_input">Sizes = 0&#8211;4, XS&#8211;XL</string>
 
     <!-- UI Views -->
     <string name="new_product_name_label">Product Name: &#160;</string>

@@ -80,7 +80,7 @@
 
         <ImageView
             android:id="@+id/empty_image"
-            android:src="@drawable/ic_launcher_foreground"
+            android:src="@drawable/icon_dropdown"
             android:contentDescription="Empty Image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
