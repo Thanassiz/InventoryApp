@@ -16,7 +16,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,17 +28,14 @@ import android.widget.Toast;
 import com.example.android.inventoryapp.data.StoreContract;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-
     private final String TAG = MainActivity.class.getSimpleName();
     private final int LOADER_ID = 0;
-
     @BindView(R.id.order_by_spinner)
     AppCompatSpinner spinner;
     @BindView(R.id.search_view)
@@ -62,14 +58,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         //String json = "http://api.shopstyle.com/api/v2/products?pid=uid6276-40892826-2&fts=t+shirt&offset=0&limit=10";
-
         // add mock data
       /*  for (int i = 1; i < 21 ; i++) {
             byte[] expectedRead = new byte[] { (byte) 129, (byte) 130, (byte) 131};
-            Shirt shirt = new Shirt("Levi's T-shirt: " + i, expectedRead, (float) 14.655, 2, 1, "Levi' Store", "1234567890" );
-            StoreDatabase.getInstance(this).insertData(shirt);
-        }*/
-
+            Shirt shirt = new Shirt( "Levi's T-shirt: " + i, expectedRead, (float) 14.655, 2, 1, "Levi' Store", "1234567890" );
+            StoreDatabase.getInstance( this ).insertData( shirt );
+        }
+*/
         setSpinner();
         searchProduct();
         cursorAdapter = new ShirtAdapter(this, null);
@@ -78,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Set divider in the list
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL));
         recyclerView.setAdapter(cursorAdapter);
-
         // Start the loader
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
@@ -118,9 +112,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      */
     @OnClick(R.id.fab_delete)
     void onClickDelete() {
-        if (cursorAdapter.getItemCount() == 0) {
-            Log.i(TAG, "There is nothing to delete.");
+        // Find if there is an item to delete or a selected item and show the appropriate message.
+        ArrayList<ShirtViewModel> list = new ArrayList<>(ShirtAdapter.shirtMap.values());
+        boolean isSelected = false;
+        for (ShirtViewModel item : list) {
+            if (item.isChecked) {
+                isSelected = true;
+            }
+        }
+
+        if (ShirtAdapter.shirtMap.values().size() == 0) {
+            Log.i(TAG, "There is no item to delete.");
+        } else if (!isSelected) {
+            Toast toast = Toast.makeText(this, "No item selected.", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
         } else {
+            // Delete the selected item(s) and show a Alert dialog before deletion.
             showDeleteConfirmationDialog();
         }
     }
@@ -130,16 +138,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
      */
     @OnClick(R.id.fab_shop)
     void onClickShop() {
-        Cursor cursor = cursorAdapter.getCursor();
-        List<ShirtViewModel> list = cursorAdapter.fromCursor(cursor);
+        ArrayList<ShirtViewModel> list = new ArrayList<>(ShirtAdapter.shirtMap.values());
         ArrayList<String> selectedItems = new ArrayList<>();
-        SparseBooleanArray booleanArray = cursorAdapter.getItemStateArray();
         boolean isSelected = false;
-        for (int position = 0; position < cursorAdapter.getItemCount(); position++) {
-            ShirtViewModel item = list.get(position);
-            boolean isChecked = booleanArray.get(position);
-            Log.e(TAG, "cursor id: " + item.getId());
-            if (item != null && isChecked) {
+        for (ShirtViewModel item : list) {
+            if (item.isChecked) {
                 long id = item.getId();
                 isSelected = true;
                 selectedItems.add(String.valueOf(id));
@@ -155,39 +158,36 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             intent.putStringArrayListExtra("selected_list", selectedItems);
             startActivity(intent);
         }
-
     }
 
     private void deleteSelectedItem() {
-        Cursor cursor = cursorAdapter.getCursor();
-        List<ShirtViewModel> list = cursorAdapter.fromCursor(cursor);
-        SparseBooleanArray booleanArray = cursorAdapter.getItemStateArray();
-        for (int position = 0; position < cursorAdapter.getItemCount(); position++) {
-            ShirtViewModel item = list.get(position);
-            boolean isChecked = booleanArray.get(position);
+        ArrayList<ShirtViewModel> list = new ArrayList<>(ShirtAdapter.shirtMap.values());
+        String where = StoreContract.StoreEntry._ID + "=?";
+        ArrayList<String> selectedIds = new ArrayList<>();
+        StringBuilder builder = new StringBuilder();
+        builder.append(where);
+        int countCheck = 0;
+        for (ShirtViewModel item : list) {
             long id = item.getId();
-            Log.e("TEST", "loop id: " + id);
-            String where = StoreContract.StoreEntry._ID + "=?";
-            String[] selectionArgs = new String[]{"" + id};
-            //Uri productUri = ContentUris.withAppendedId(StoreContract.StoreEntry.CONTENT_URI, id);
-            if (item != null && isChecked) {
-                //int rowsDeleted = getContentResolver().delete(productUri, null, null);
-                booleanArray.delete(position);
-                int rowsDeleted = getContentResolver().delete(StoreContract.StoreEntry.CONTENT_URI, where, selectionArgs);
-                cursorAdapter.changeCursor(cursor);
-                Log.e("TEST", "deleted position: " + position + ", with id= " + id + ", getItemPosition= " + cursor.getPosition());
-                Log.e("TEST", "checked: " + isChecked);
-
-                if (rowsDeleted > 0) {
-                    Toast.makeText(this, rowsDeleted + " " + getString(R.string.toast_rows_deleted), Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, rowsDeleted + " " + getString(R.string.toast_rows_deleted));
-                } else {
-                    Log.i(TAG, getString(R.string.error_delete_item));
+            if (item.isChecked) {
+                if (countCheck > 0) {
+                    builder.append(" OR " + StoreContract.StoreEntry._ID + "=?");
                 }
+                countCheck++;
+                selectedIds.add(String.valueOf(id));
             }
         }
-
-
+        where = builder.toString();
+        Log.d(TAG, where);
+        String[] selectionArgs = new String[selectedIds.size()];
+        selectionArgs = selectedIds.toArray(selectionArgs);
+        int rowsDeleted = getContentResolver().delete(StoreContract.StoreEntry.CONTENT_URI, where, selectionArgs);
+        if (rowsDeleted > 0) {
+            Toast.makeText(this, rowsDeleted + " " + getString(R.string.toast_rows_deleted), Toast.LENGTH_SHORT).show();
+            Log.i(TAG, rowsDeleted + " " + getString(R.string.toast_rows_deleted));
+        } else {
+            Log.i(TAG, getString(R.string.error_delete_item));
+        }
     }
 
     private void deleteAllData() {
@@ -202,14 +202,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-
         String querySortOder = null;
         String selection = null;
         String[] selectionArgs = null;
         final String SORT_ORDER_ASC = " ASC";
         final String SORT_ORDER_DESC = " DESC";
         String orderBy = Utilities.retrieveOrderByPreference(this);
-
         if (orderBy != null) {
             if (orderBy.contentEquals(getString(R.string.order_by_best_match))) {
                 querySortOder = StoreContract.StoreEntry._ID + SORT_ORDER_DESC; //Show the newest added shirts first
@@ -219,34 +217,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 querySortOder = StoreContract.StoreEntry.COLUMN_PRICE + SORT_ORDER_DESC; // Highest price first
             }
         }
-
         if (bundle != null) {
             selection = bundle.getString("select");
             selectionArgs = bundle.getStringArray("select_args");
         }
         // Define a projection that specifies which columns from the database will be shown after this query.
-        String[] projection = {
-                StoreContract.StoreEntry._ID,
-                StoreContract.StoreEntry.COLUMN_PRODUCT_NAME,
-                StoreContract.StoreEntry.COLUMN_IMAGES,
-                StoreContract.StoreEntry.COLUMN_PRICE,
-                StoreContract.StoreEntry.COLUMN_SIZE,
-                StoreContract.StoreEntry.COLUMN_QUANTITY,
-                StoreContract.StoreEntry.COLUMN_SUPPLIER_NAME,
-                StoreContract.StoreEntry.COLUMN_SUPPLIER_PHONE_NUMBER};
-
-        return new CursorLoader(this,
-                StoreContract.StoreEntry.CONTENT_URI,
-                projection,
-                selection,
-                selectionArgs,
-                querySortOder);
+        String[] projection = {StoreContract.StoreEntry._ID, StoreContract.StoreEntry.COLUMN_PRODUCT_NAME, StoreContract.StoreEntry.COLUMN_IMAGES, StoreContract.StoreEntry.COLUMN_PRICE, StoreContract.StoreEntry.COLUMN_SIZE, StoreContract.StoreEntry.COLUMN_QUANTITY, StoreContract.StoreEntry.COLUMN_SUPPLIER_NAME, StoreContract.StoreEntry.COLUMN_SUPPLIER_PHONE_NUMBER};
+        return new CursorLoader(this, StoreContract.StoreEntry.CONTENT_URI, projection, selection, selectionArgs, querySortOder);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        cursorAdapter.swapCursor(cursor);
-
+        ShirtAdapter.shirtMap.clear();
+        cursorAdapter.changeCursor(cursor);
         if (cursor.getCount() == 0) {
             emptyView.setVisibility(View.VISIBLE);
         } else {
@@ -256,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+        ShirtAdapter.shirtMap.clear();
         cursorAdapter.swapCursor(null);
     }
 
@@ -279,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             }
         });
-
         // Create and show the AlertDialog
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
@@ -295,7 +278,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerList));
         String preference = Utilities.retrieveOrderByPreference(this);
         if (!Utilities.isEmptyString(preference)) {
-            for (int i = 0; i < spinnerList.size(); i++) {
+            for (int i = 0;
+                 i < spinnerList.size();
+                 i++) {
                 if (preference.contentEquals(spinnerList.get(i))) {
                     spinner.setSelection(i);
                 }
@@ -328,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
         });
     }
@@ -352,7 +336,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 return false;
             }
         });
-
     }
 
     /*   private void displayDB(){

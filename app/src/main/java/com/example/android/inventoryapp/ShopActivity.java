@@ -10,6 +10,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ShopActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -31,6 +34,7 @@ public class ShopActivity extends AppCompatActivity implements LoaderManager.Loa
     Button buyButton;
     private ArrayList<String> selectedItems = new ArrayList<>();
     CheckOutShirtAdapter adapter;
+    float finalPrice = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +53,34 @@ public class ShopActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerBasketView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         recyclerBasketView.setAdapter(adapter);
 
+        adapter.setOnItemClickListener(new CheckOutShirtAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                for (int i = 0; i <adapter.getItemCount() ; i++) {
+                    String itemQuantity = ((TextView) recyclerBasketView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.shop_quantity_value)).getText().toString();
+                    String itemTotalPrice = ((TextView) recyclerBasketView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.shop_price_value)).getText().toString();
+                    finalPrice = finalPrice + Float.parseFloat(itemTotalPrice);
+                }
+                totalPrice.setText(String.format("%.02f", finalPrice));
+                finalPrice = 0;
+
+            }
+        });
+
         // Start the loader
         getLoaderManager().initLoader(0, null, this);
+    }
+
+    @OnClick(R.id.buy_button)
+    void onClickBuy() {
+        //ArrayList<ShirtViewModel> list = new ArrayList<>(CheckOutShirtAdapter.basketMap.values());
+        for (int i = 0; i <adapter.getItemCount() ; i++) {
+            String itemQuantity = ((TextView) recyclerBasketView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.shop_quantity_value)).getText().toString();
+            String itemTotalPrice = ((TextView) recyclerBasketView.findViewHolderForAdapterPosition(i).itemView.findViewById(R.id.shop_price_value)).getText().toString();
+            finalPrice = finalPrice + Float.parseFloat(itemTotalPrice);
+        }
+        totalPrice.setText(String.format("%.02f", finalPrice));
+        finalPrice = 0;
     }
 
     @Override
@@ -67,7 +97,6 @@ public class ShopActivity extends AppCompatActivity implements LoaderManager.Loa
                 StoreContract.StoreEntry.COLUMN_SUPPLIER_PHONE_NUMBER};
 
         String selection = StoreContract.StoreEntry._ID + "=?";
-        //String[] selectionArgs = new String[]{""};
         String[] selectionArgs = new String[selectedItems.size()];
         selectionArgs = selectedItems.toArray(selectionArgs);
         StringBuilder builder = new StringBuilder();

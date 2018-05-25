@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.example.android.inventoryapp.data.StoreContract;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,6 +30,22 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
     private Context context;
     private Cursor cursor;
     private ArrayList<String> selectedItems = new ArrayList<>();
+    public static HashMap<Integer, ShirtViewModel> basketMap = new HashMap<>();
+
+    /***** Creating OnItemClickListener *****/
+
+    // Define listener member variable
+    private OnItemClickListener listener;
+
+    // Define the listener interface
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+
+    // Define the method that allows the parent activity or fragment to define the listener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
 
     public CheckOutShirtAdapter(Context context, Cursor cursor, ArrayList<String> selectedItems) {
@@ -36,6 +53,7 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
         this.context = context;
         this.cursor = cursor;
         this.selectedItems = selectedItems;
+        this.basketMap.clear();
     }
 
 
@@ -47,8 +65,8 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
 
     @Override
     public void onBindViewHolder(BasketViewHolder viewHolder, Cursor cursor, int position) {
-        List<ShirtViewModel> shirts = fromCursor(cursor);
-        viewHolder.bindBasketView(shirts, selectedItems);
+        ShirtViewModel shirt = fromCursor(cursor);
+        viewHolder.bindBasketView(shirt, selectedItems);
     }
 
     public class BasketViewHolder extends RecyclerView.ViewHolder {
@@ -63,7 +81,7 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
         @BindView(R.id.shop_plus)
         Button plusButton;
         @BindView(R.id.shop_quantity_value)
-        TextView quantityBaskeView;
+        TextView quantityBasketView;
         @BindView(R.id.shop_price_value)
         TextView priceBasketView;
         private ShirtViewModel shirt;
@@ -73,40 +91,69 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
             ButterKnife.bind(this, basketItemView);
         }
 
-        public void bindBasketView(List<ShirtViewModel> shirts, ArrayList<String> selectedItems) {
-            long id = Long.parseLong(selectedItems.get(getAdapterPosition()));
-            shirt = shirts.get(getAdapterPosition());
-            if (id == shirt.getId()) {
-                nameItemView.setText(shirt.getName());
-                sizeItemView.setText(String.valueOf(shirt.getSize()));
-                quantityItemView.setText(String.valueOf(shirt.getQuantity()));
+        public void bindBasketView(final ShirtViewModel shirt, ArrayList<String> selectedItems) {
+            this.shirt = shirt;
+            for (String selectedId : selectedItems) {
+                if (selectedId.equals(String.valueOf(shirt.getId()))) {
+                    nameItemView.setText(shirt.getName());
+                    sizeItemView.setText(String.valueOf(shirt.getSize()));
+                    quantityItemView.setText(String.valueOf(shirt.getQuantity()));
+                }
             }
-            quantityBaskeView.setText(String.valueOf(0));
+            quantityBasketView.setText(String.valueOf(0));
             priceBasketView.setText(String.valueOf(0.00));
+
+            minusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(itemView, position);
+                            quantityMinusValidation(Integer.parseInt(quantityBasketView.getText().toString()), shirt);
+                        }
+                    }
+                }
+            });
+
+            plusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (listener != null) {
+
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onItemClick(itemView, position);
+                            quantityPlusValidation(Integer.parseInt(quantityBasketView.getText().toString()), Integer.parseInt(quantityItemView.getText().toString()), shirt);
+                        }
+                    }
+                }
+            });
 
         }
 
-        @OnClick(R.id.shop_plus)
+      /*
+       @OnClick(R.id.shop_plus)
         void onClickPlus() {
             if (shirt != null) {
-                quantityPlusValidation(Integer.parseInt(quantityBaskeView.getText().toString()), Integer.parseInt(quantityItemView.getText().toString()), shirt);
+                quantityPlusValidation(Integer.parseInt(quantityBasketView.getText().toString()), Integer.parseInt(quantityItemView.getText().toString()), shirt);
             }
         }
 
         @OnClick(R.id.shop_minus)
         void onClickMinus() {
             if (shirt != null) {
-                quantityMinusValidation(Integer.parseInt(quantityBaskeView.getText().toString()), shirt);
+                quantityMinusValidation(Integer.parseInt(quantityBasketView.getText().toString()), shirt);
             }
         }
-
+        */
 
         public void quantityPlusValidation(int currentQuantity, int itemQuantity, ShirtViewModel shirt) {
             if (currentQuantity >= itemQuantity) {
                 Log.i(TAG, "Not enough items on stock.");
             } else {
                 currentQuantity++;
-                quantityBaskeView.setText(String.valueOf(currentQuantity));
+                quantityBasketView.setText(String.valueOf(currentQuantity));
                 float sumItemPrice = currentQuantity * shirt.getPrice();
                 String formattedString = String.format("%.02f", sumItemPrice);
                 priceBasketView.setText(formattedString);
@@ -118,31 +165,31 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
                 Log.i(TAG, "Cannot buy less than 1 item.");
             } else {
                 currentQuantity--;
-                quantityBaskeView.setText(String.valueOf(currentQuantity));
+                quantityBasketView.setText(String.valueOf(currentQuantity));
                 float sumItemPrice = currentQuantity * shirt.getPrice();
                 String formattedString = String.format("%.02f", sumItemPrice);
                 priceBasketView.setText(formattedString);
             }
         }
+
     }
 
 
-    public List<ShirtViewModel> fromCursor(Cursor cursor) {
+    public ShirtViewModel fromCursor(Cursor cursor) {
 
-        // Figure out the index of each column
         int idColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry._ID);
-        int nameColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_PRODUCT_NAME);
-        int imageColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_IMAGES);
-        int priceColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_PRICE);
-        int sizeColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_SIZE);
-        int quantityColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_QUANTITY);
-        int supplyNameColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_SUPPLIER_NAME);
-        int supplyPhoneNumberColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_SUPPLIER_PHONE_NUMBER);
+        int currentId = cursor.getInt(idColumnIndex);
+        if (!basketMap.containsKey(currentId)) {
+            // Figure out the index of each column
+            int nameColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_PRODUCT_NAME);
+            int imageColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_IMAGES);
+            int priceColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_PRICE);
+            int sizeColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_SIZE);
+            int quantityColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_QUANTITY);
+            int supplyNameColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_SUPPLIER_NAME);
+            int supplyPhoneNumberColumnIndex = cursor.getColumnIndex(StoreContract.StoreEntry.COLUMN_SUPPLIER_PHONE_NUMBER);
 
-        List<ShirtViewModel> shirts = new ArrayList<>();
-        for (int i = 0; i < cursor.getCount(); i++) {
 
-            int currentId = cursor.getInt(idColumnIndex);
             String currentName = cursor.getString(nameColumnIndex);
             byte[] currentImageByteArray = cursor.getBlob(imageColumnIndex);
             float currentPrice = cursor.getFloat(priceColumnIndex);
@@ -151,10 +198,11 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
             String currentSupplyName = cursor.getString(supplyNameColumnIndex);
             String currentSupplyPhone = cursor.getString(supplyPhoneNumberColumnIndex);
 
-            shirts.add(new ShirtViewModel(currentId, currentName, currentImageByteArray, currentPrice, currentSize, currentQuantity, currentSupplyName, currentSupplyPhone));
+            basketMap.put(currentId, new ShirtViewModel(currentId, currentName, currentImageByteArray, currentPrice, currentSize, currentQuantity, currentSupplyName, currentSupplyPhone));
         }
 
-        return shirts;
+        ShirtViewModel shirt = basketMap.get(currentId);
+        return shirt;
     }
 
 }

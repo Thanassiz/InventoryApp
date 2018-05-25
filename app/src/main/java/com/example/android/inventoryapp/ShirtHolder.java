@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -14,8 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.inventoryapp.data.StoreContract;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,10 +47,7 @@ public class ShirtHolder extends RecyclerView.ViewHolder {
         this.context = context;
     }
 
-    public void bindView(List<ShirtViewModel> shirts, final SparseBooleanArray booleanArray) {
-       final int adapterPosition = getAdapterPosition();
-       final  ShirtViewModel shirt = shirts.get(adapterPosition);
-       boolean isChecked = booleanArray.get(adapterPosition);
+    public void bindView( final ShirtViewModel shirt ) {
 
         nameView.setText(shirt.getName());
         priceView.setText(String.valueOf(shirt.getPrice()));
@@ -66,13 +60,11 @@ public class ShirtHolder extends RecyclerView.ViewHolder {
             availableView.setText(R.string.available_stock_yes);
         }
         checkBox.setOnCheckedChangeListener(null); //  This is the proper way to handle onChecked events.
-        checkBox.setChecked(isChecked);
+        checkBox.setChecked(shirt.isChecked);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                b = compoundButton.isChecked();
-                booleanArray.put(adapterPosition, b);
-                shirt.isChecked = b;
+                ShirtAdapter.shirtMap.get( shirt.getId() ).isChecked = b;
             }
         });
 
