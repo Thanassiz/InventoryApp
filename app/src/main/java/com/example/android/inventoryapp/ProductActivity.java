@@ -1,6 +1,7 @@
 package com.example.android.inventoryapp;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -25,6 +26,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.android.inventoryapp.data.StoreContract;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -138,22 +141,27 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
 
     private void addProduct() {
         if (isEmptyValidation()) {
-            ContentValues values = new ContentValues();
-            values.put(StoreContract.StoreEntry.COLUMN_PRODUCT_NAME, name);
-            values.put(StoreContract.StoreEntry.COLUMN_IMAGES, images);
-            values.put(StoreContract.StoreEntry.COLUMN_PRICE, price);
-            values.put(StoreContract.StoreEntry.COLUMN_SIZE, size);
-            values.put(StoreContract.StoreEntry.COLUMN_QUANTITY, quantity);
-            values.put(StoreContract.StoreEntry.COLUMN_SUPPLIER_NAME, suppName);
-            values.put(StoreContract.StoreEntry.COLUMN_SUPPLIER_PHONE_NUMBER, suppPhone);
-
-            Uri currentUri = getContentResolver().insert(StoreContract.StoreEntry.CONTENT_URI, values);
-            if (currentUri == null) {
-                Toast.makeText(this, "Failed to insert data.", Toast.LENGTH_SHORT).show();
+            if (isDuplicatedItem(name, price, size, suppName, suppPhone)) {
+                updateProduct(quantity);
             } else {
-                Toast.makeText(this, "Successful insert.", Toast.LENGTH_SHORT).show();
-                finish();
+                ContentValues values = new ContentValues();
+                values.put(StoreContract.StoreEntry.COLUMN_PRODUCT_NAME, name);
+                values.put(StoreContract.StoreEntry.COLUMN_IMAGES, images);
+                values.put(StoreContract.StoreEntry.COLUMN_PRICE, price);
+                values.put(StoreContract.StoreEntry.COLUMN_SIZE, size);
+                values.put(StoreContract.StoreEntry.COLUMN_QUANTITY, quantity);
+                values.put(StoreContract.StoreEntry.COLUMN_SUPPLIER_NAME, suppName);
+                values.put(StoreContract.StoreEntry.COLUMN_SUPPLIER_PHONE_NUMBER, suppPhone);
+
+                Uri currentUri = getContentResolver().insert(StoreContract.StoreEntry.CONTENT_URI, values);
+                if (currentUri == null) {
+                    Toast.makeText(this, "Failed to insert data.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Successful insert.", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
+
         }
     }
 
@@ -179,6 +187,29 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
             }
 
         }
+    }
+
+    /** Update without Validation cause validation has already been made on Add product method (when calling this)
+     * skipping validation so initialization of quantity wont happen */
+    private void updateProduct(String quantity) {
+            ContentValues values = new ContentValues();
+            values.put(StoreContract.StoreEntry.COLUMN_PRODUCT_NAME, name);
+            values.put(StoreContract.StoreEntry.COLUMN_IMAGES, images);
+            values.put(StoreContract.StoreEntry.COLUMN_PRICE, price);
+            values.put(StoreContract.StoreEntry.COLUMN_SIZE, size);
+            values.put(StoreContract.StoreEntry.COLUMN_QUANTITY, quantity);
+            values.put(StoreContract.StoreEntry.COLUMN_SUPPLIER_NAME, suppName);
+            values.put(StoreContract.StoreEntry.COLUMN_SUPPLIER_PHONE_NUMBER, suppPhone);
+
+            int rowsUpdated = getContentResolver().update(receivedUri, values, null, null);
+
+            // Display error message in Log if product stock fails to update
+            if (rowsUpdated <= 0) {
+                Toast.makeText(this, getString(R.string.error_update_item), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, rowsUpdated + " " + getString(R.string.toast_rows_updated), Toast.LENGTH_SHORT).show();
+                finish();
+            }
     }
 
     private boolean isEmptyValidation() {
@@ -252,16 +283,24 @@ public class ProductActivity extends AppCompatActivity implements LoaderManager.
         }
     }
 
-    //TODO: contentEquals cursor.getName etc..
-    private void checkDuplicateItem() {
-        if (nameEditText.getText().toString().contentEquals("") &&
-                priceEditText.getText().toString().contentEquals("") &&
-                sizeEditText.getText().toString().contentEquals("") &&
-                suppNameEditText.getText().toString().contentEquals("") &&
-                suppPhoneEditText.getText().toString().contentEquals("")
-                ) {
-            // UPDATE QUANTITY
+    // Check if Name, Size, Price, SupplierName and Phone are same with an item from DB, if yes update quantity else insert new.
+    private boolean isDuplicatedItem(String name, String price, String size, String suppName, String suppPhone) {
+        ArrayList<ShirtViewModel> list = new ArrayList<>(ShirtAdapter.shirtMap.values());
+        for (ShirtViewModel shirt : list) {
+            if (name.equals(shirt.getName()) &&
+                    String.valueOf(Float.parseFloat(price)).equals(String.valueOf(shirt.getPrice())) &&
+                    size.equals(String.valueOf(shirt.getSize())) &&
+                    suppName.equals(shirt.getSupplierName()) &&
+                    suppPhone.equals(shirt.getSupplierPhoneNumber())
+                    ) {
+                int newQuantity = shirt.getQuantity() + Integer.parseInt(quantity);
+                long id = shirt.getId();
+                quantity = String.valueOf(newQuantity);
+                receivedUri = ContentUris.withAppendedId(StoreContract.StoreEntry.CONTENT_URI, id);
+                return true;
+            }
         }
+        return false;
     }
 
     @OnClick(R.id.new_product_add_image_button)

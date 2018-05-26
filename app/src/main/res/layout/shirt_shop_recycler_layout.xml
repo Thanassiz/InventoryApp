@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="@dimen/small"
+    android:layout_marginTop="2dp"
     android:background="@drawable/shirt_background_item"
     android:orientation="vertical">
 
@@ -20,16 +21,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/small"
-                android:textSize="22sp"
+                android:textSize="@dimen/basket_label_text_medium"
                 android:textColor="@android:color/black"
-                android:text="Brand:" />
+                android:text="@string/basket_item_brand_label" />
 
             <TextView
                 android:id="@+id/shop_name_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/small"
-                android:textSize="22sp"
+                android:textSize="@dimen/basket_label_text_medium"
                 android:textColor="@android:color/black"
                 tools:text="T-Shirt Levis" />
         </LinearLayout>
@@ -41,15 +42,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/small"
-            android:textSize="22sp"
+            android:textSize="@dimen/basket_label_text_medium"
             android:textColor="@android:color/black"
-            android:text="Size:" />
+            android:text="@string/shirt_item_size_label" />
             <TextView
                 android:id="@+id/shop_size_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/small"
-                android:textSize="22sp"
+                android:textSize="@dimen/basket_label_text_medium"
                 android:textColor="@android:color/black"
                 tools:text="S" />
 
@@ -62,15 +63,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/small"
-                android:textSize="22sp"
+                android:textSize="@dimen/basket_label_text_medium"
                 android:textColor="@android:color/black"
-                android:text="Quantity:" />
+                android:text="@string/basket_item_quantity_label" />
             <TextView
                 android:id="@+id/shop_quantity_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/small"
-                android:textSize="22sp"
+                android:textSize="@dimen/basket_label_text_medium"
                 android:textColor="@android:color/black"
                 tools:text="14" />
 
@@ -85,8 +86,8 @@
 
         <Button
             android:id="@+id/shop_minus"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="@dimen/shop_button_height"
+            android:layout_height="@dimen/shop_button_height"
             android:background="@drawable/icon_minus" />
 
         <TextView
@@ -97,13 +98,13 @@
             android:layout_marginLeft="@dimen/small"
             android:layout_marginRight="@dimen/small"
             android:padding="@dimen/x_small"
-            android:textSize="34sp"
+            android:textSize="@dimen/basket_label_text_x_large"
             tools:text="0" />
 
         <Button
             android:id="@+id/shop_plus"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="@dimen/shop_button_height"
+            android:layout_height="@dimen/shop_button_height"
             android:background="@drawable/icon_plus" />
 
         <TextView
@@ -113,8 +114,8 @@
             android:layout_marginLeft="@dimen/small"
             android:layout_marginRight="@dimen/x_small"
             android:textColor="@android:color/black"
-            android:textSize="26sp"
-            android:text="Price:" />
+            android:textSize="@dimen/basket_label_text_large"
+            android:text="@string/shirt_item_price_label" />
 
         <TextView
             android:id="@+id/shop_price_value"
@@ -124,7 +125,7 @@
             android:layout_marginLeft="@dimen/x_small"
             android:layout_marginRight="@dimen/x_small"
             android:textColor="@android:color/black"
-            android:textSize="26sp"
+            android:textSize="@dimen/basket_label_text_large"
             tools:text="0" />
 
         <TextView
@@ -132,8 +133,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textColor="@android:color/black"
-            android:textSize="26sp"
-            android:text="$" />
+            android:textSize="@dimen/basket_label_text_large"
+            android:text="@string/dollar_symbol" />
 
     </LinearLayout>
 

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,22 +32,6 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
     private Cursor cursor;
     private ArrayList<String> selectedItems = new ArrayList<>();
     public static HashMap<Integer, ShirtViewModel> basketMap = new HashMap<>();
-
-    /***** Creating OnItemClickListener *****/
-
-    // Define listener member variable
-    private OnItemClickListener listener;
-
-    // Define the listener interface
-    public interface OnItemClickListener {
-        void onItemClick(View itemView, int position);
-    }
-
-    // Define the method that allows the parent activity or fragment to define the listener
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
-    }
-
 
     public CheckOutShirtAdapter(Context context, Cursor cursor, ArrayList<String> selectedItems) {
         super(context, cursor);
@@ -96,43 +81,29 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
             for (String selectedId : selectedItems) {
                 if (selectedId.equals(String.valueOf(shirt.getId()))) {
                     nameItemView.setText(shirt.getName());
-                    sizeItemView.setText(String.valueOf(shirt.getSize()));
+                    if (shirt.getSize() == 0){
+                        sizeItemView.setText(R.string.size_XS);
+                    }else if (shirt.getSize() == 1){
+                        sizeItemView.setText(R.string.size_S);
+                    }else if (shirt.getSize() == 2){
+                        sizeItemView.setText(R.string.size_M);
+                    }
+                    else if (shirt.getSize() == 3){
+                        sizeItemView.setText(R.string.size_L);
+                    }
+                    else if (shirt.getSize() == 4){
+                        sizeItemView.setText(R.string.size_XL);
+                    }else {
+                        sizeItemView.setText(R.string.unknown_size);
+                    }
                     quantityItemView.setText(String.valueOf(shirt.getQuantity()));
                 }
             }
             quantityBasketView.setText(String.valueOf(0));
             priceBasketView.setText(String.valueOf(0.00));
 
-            minusButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (listener != null) {
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemClick(itemView, position);
-                            quantityMinusValidation(Integer.parseInt(quantityBasketView.getText().toString()), shirt);
-                        }
-                    }
-                }
-            });
-
-            plusButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (listener != null) {
-
-                        int position = getAdapterPosition();
-                        if (position != RecyclerView.NO_POSITION) {
-                            listener.onItemClick(itemView, position);
-                            quantityPlusValidation(Integer.parseInt(quantityBasketView.getText().toString()), Integer.parseInt(quantityItemView.getText().toString()), shirt);
-                        }
-                    }
-                }
-            });
-
         }
 
-      /*
        @OnClick(R.id.shop_plus)
         void onClickPlus() {
             if (shirt != null) {
@@ -146,7 +117,6 @@ public class CheckOutShirtAdapter extends RecyclerViewCursorAdapter<CheckOutShir
                 quantityMinusValidation(Integer.parseInt(quantityBasketView.getText().toString()), shirt);
             }
         }
-        */
 
         public void quantityPlusValidation(int currentQuantity, int itemQuantity, ShirtViewModel shirt) {
             if (currentQuantity >= itemQuantity) {

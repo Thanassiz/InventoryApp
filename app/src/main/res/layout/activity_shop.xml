@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/main_background"
     tools:context="com.example.android.inventoryapp.MainActivity">
 
         <android.support.v7.widget.RecyclerView
@@ -20,37 +21,11 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true">
 
-    <TextView
-        android:id="@+id/total_price_label"
-        android:text="Total price:&#160;"
-        android:padding="@dimen/small"
-        android:textSize="@dimen/textSize_large"
-        android:textColor="@android:color/black"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/total_price_value"
-            tools:text="0"
-            android:padding="@dimen/small"
-            android:textSize="@dimen/textSize_large"
-            android:textColor="@android:color/black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:text="$"
-            android:padding="@dimen/small"
-            android:textSize="@dimen/textSize_large"
-            android:textColor="@android:color/black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
     <Button
         android:id="@+id/buy_button"
-        android:text="buy"
+        android:background="@drawable/buy_button"
         android:layout_marginLeft="@dimen/medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="@dimen/shop_button_width"
+        android:layout_height="@dimen/shop_button_height" />
     </LinearLayout>
 </RelativeLayout>

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/shirt_background_item"
+    android:layout_marginTop="2dp"
     android:descendantFocusability="blocksDescendants"
     android:padding="@dimen/x_small">
 
@@ -40,7 +41,7 @@
                 android:layout_width="160dp"
                 android:layout_height="160dp"
                 android:adjustViewBounds="true"
-                android:contentDescription="Shirt Image"
+                android:contentDescription="@string/description_shirt_image"
                 android:src="@drawable/ic_launcher_foreground" />
         </android.support.v7.widget.CardView>
 
@@ -61,7 +62,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="50"
-                    android:text="Price:"
+                    android:text="@string/shirt_item_price_label"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/textSize_large" />
 
@@ -85,7 +86,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="50"
-                    android:text="Size: "
+                    android:text="@string/shirt_item_size_label"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/textSize_large" />
 
@@ -109,7 +110,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="50"
-                    android:text="Available: "
+                    android:text="@string/shirt_item_available_label"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/textSize_large" />
 
@@ -132,7 +133,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="50"
-                    android:text="Supplier: "
+                    android:text="@string/shirt_item_supplier_label"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/textSize_large" />
 

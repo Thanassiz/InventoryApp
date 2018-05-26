@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // Sets layout manager for recycler view
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         // Set divider in the list
-        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), 0));
         recyclerView.setAdapter(cursorAdapter);
         // Start the loader
         getLoaderManager().initLoader(LOADER_ID, null, this);
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (ShirtAdapter.shirtMap.values().size() == 0) {
             Log.i(TAG, "There is no item to delete.");
         } else if (!isSelected) {
-            Toast toast = Toast.makeText(this, "No item selected.", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(this, R.string.toast_no_items_selected, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         } else {
@@ -149,8 +149,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 Log.i(TAG, "Shirt added with id: " + item.getId());
             }
         }
-        if (!isSelected) {
-            Toast toast = Toast.makeText(this, "No item selected.", Toast.LENGTH_SHORT);
+        if (ShirtAdapter.shirtMap.values().size() == 0) {
+            Log.i(TAG, "There is no item to buy.");
+        } else if (!isSelected) {
+            Toast toast = Toast.makeText(this, R.string.toast_no_items_selected, Toast.LENGTH_SHORT);
             toast.setGravity(Gravity.CENTER, 0, 0);
             toast.show();
         } else {
@@ -215,6 +217,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 querySortOder = StoreContract.StoreEntry.COLUMN_PRICE + SORT_ORDER_ASC; // Lowest price first
             } else if (orderBy.contentEquals(getString(R.string.order_by_highest))) {
                 querySortOder = StoreContract.StoreEntry.COLUMN_PRICE + SORT_ORDER_DESC; // Highest price first
+            } else if (orderBy.contentEquals(getString(R.string.order_by_available))) {
+                selection = StoreContract.StoreEntry.COLUMN_QUANTITY + "!=?";
+                selectionArgs = new String[]{"0"};
+                querySortOder = StoreContract.StoreEntry.COLUMN_QUANTITY + SORT_ORDER_ASC; // Lowest quantity availability first (removes not available)
             }
         }
         if (bundle != null) {
@@ -250,14 +256,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         builder.setMessage("Delete the selected item(s) ?");
         builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // User clicked the "Delete" button, so delete the pet.
+                // User clicked the "Delete" button, so delete the item.
                 deleteSelectedItem();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 // User clicked the "Cancel" button, so dismiss the dialog
-                // and continue editing the pet.
+                // and continue editing the item.
                 if (dialog != null) {
                     dialog.dismiss();
                 }
@@ -274,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             add(getString(R.string.order_by_best_match));
             add(getString(R.string.order_by_lowest));
             add(getString(R.string.order_by_highest));
+            add(getString(R.string.order_by_available));
         }};
         spinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerList));
         String preference = Utilities.retrieveOrderByPreference(this);
@@ -306,6 +313,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                         getLoaderManager().restartLoader(LOADER_ID, null, MainActivity.this);
                         cursorAdapter.notifyDataSetChanged();
                         break;
+                    case 3:
+                        Utilities.setOrderByPreference(MainActivity.this, spinnerList.get(position));
+                        getLoaderManager().restartLoader(LOADER_ID, null, MainActivity.this);
+                        cursorAdapter.notifyDataSetChanged();
                     default:
                         break;
                 }

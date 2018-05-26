@@ -23,25 +23,47 @@
     <string name="error_invalid_size_input">Sizes = 0&#8211;4, XS&#8211;XL</string>
 
     <!-- UI Views -->
-    <string name="new_product_name_label">Product Name: &#160;</string>
-    <string name="new_product_price_label">Price: &#160;</string>
-    <string name="new_product_size_label">Size: &#160;</string>
-    <string name="new_product_quantity_label">Quantity: &#160;</string>
-    <string name="new_product_supplier_name_label">Supplier Name: &#160;</string>
-    <string name="new_product_supplier_phone_label">Supplier Phone: &#160;</string>
+    <string name="new_product_name_label">Product Name:&#160;</string>
+    <string name="new_product_price_label">Price:&#160;</string>
+    <string name="new_product_size_label">Size:&#160;</string>
+    <string name="new_product_quantity_label">Quantity:&#160;</string>
+    <string name="new_product_supplier_name_label">Supplier Name:&#160;</string>
+    <string name="new_product_supplier_phone_label">Supplier Phone:&#160;</string>
     <string name="new_product_fields_label">All fields are required to be filled.</string>
     <string name="new_product_add_image_label">Add Image</string>
     <string name="available_stock_yes">Yes</string>
     <string name="available_stock_no">No</string>
     <string name="toast_rows_deleted">item(s) deleted.</string>
     <string name="toast_rows_updated">item(s) updated.</string>
+    <string name="empty_inventory_text">Empty Inventory</string>
+    <string name="buy_button_text">Buy</string>
+    <string name="shirt_item_price_label">Price:</string>
+    <string name="shirt_item_size_label">Size:</string>
+    <string name="shirt_item_available_label">Available:</string>
+    <string name="shirt_item_supplier_label">Supplier:</string>
+    <string name="basket_item_brand_label">Brand:</string>
+    <string name="basket_item_quantity_label">Quantity:</string>
+    <string name="dollar_symbol">$</string>
+
+    <string name="size_XS">XS</string>
+    <string name="size_S">S</string>
+    <string name="size_M">M</string>
+    <string name="size_L">L</string>
+    <string name="size_XL">XL</string>
+    <string name="unknown_size">Unknown size</string>
 
     <!-- Description -->
     <string name="description_thumbnail_preview">Thumbnail Preview</string>
+    <string name="description_empty_image">Empty Image</string>
+    <string name="description_shirt_image">Shirt Image</string>
 
     <!-- Preferences -->
     <string name="order_by_best_match">Best Match</string>
     <string name="order_by_lowest">Lowest</string>
     <string name="order_by_highest">Highest</string>
+    <string name="order_by_available">Available</string>
+    <string name="toast_add_at_least_one_item">Add at least one item.</string>
+    <string name="toast_no_items_selected">No item(s) selected.</string>
+
 
 </resources>

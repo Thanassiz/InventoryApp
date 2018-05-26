@@ -51,7 +51,22 @@ public class ShirtHolder extends RecyclerView.ViewHolder {
 
         nameView.setText(shirt.getName());
         priceView.setText(String.valueOf(shirt.getPrice()));
-        sizeView.setText(String.valueOf(shirt.getSize()));
+        if (shirt.getSize() == 0){
+            sizeView.setText(R.string.size_XS);
+        }else if (shirt.getSize() == 1){
+            sizeView.setText(R.string.size_S);
+        }else if (shirt.getSize() == 2){
+            sizeView.setText(R.string.size_M);
+        }
+        else if (shirt.getSize() == 3){
+            sizeView.setText(R.string.size_L);
+        }
+        else if (shirt.getSize() == 4){
+            sizeView.setText(R.string.size_XL);
+        }else {
+            sizeView.setText(R.string.unknown_size);
+        }
+
         supplierView.setText(shirt.getSupplierName());
         imageView.setImageBitmap(Utilities.getBitmap(shirt.getImages()));
         if (shirt.getQuantity() == 0){

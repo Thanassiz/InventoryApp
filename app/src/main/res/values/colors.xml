@@ -3,4 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorPetrol">#124658</color>
+    <color name="colorPetrolDark">#0C313D</color>
+    <color name="colorPetrolLight">#416a79</color>
+    <color name="colorPetrolGray">#70909A</color>
+    <color name="colorSilver">#e7ecee</color>
+    <color name="colorWeirdGreen">#87E76D</color>
+
+
+
 </resources>

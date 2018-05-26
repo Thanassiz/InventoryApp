@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/main_background"
     tools:context="com.example.android.inventoryapp.MainActivity">
     <!-- This LinearLayout represents the contents of the screen  -->
     <LinearLayout
@@ -51,6 +52,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_margin="@dimen/small"
+        app:backgroundTint="@color/colorPetrol"
         android:src= "@drawable/icon_shop_cart"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -60,6 +62,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/small"
+        app:backgroundTint="@color/colorPetrol"
         android:src= "@android:drawable/ic_input_add"/>
 
     <android.support.design.widget.FloatingActionButton
@@ -69,6 +72,7 @@
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@id/fab_add"
         android:layout_margin="@dimen/small"
+        app:backgroundTint="@color/colorPetrol"
         android:src= "@android:drawable/ic_delete"/>
 
     <!-- Empty view for the list -->
@@ -80,16 +84,18 @@
 
         <ImageView
             android:id="@+id/empty_image"
-            android:src="@drawable/icon_dropdown"
-            android:contentDescription="Empty Image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:src="@drawable/empty_shirt_icon"
+            android:contentDescription="@string/description_empty_image"
+            android:layout_width="@dimen/activity_edit_width"
+            android:layout_height="@dimen/activity_edit_width"
+            android:adjustViewBounds="true"
             android:layout_centerHorizontal="true" />
 
         <TextView
             android:id="@+id/empty_text"
             android:layout_below="@id/empty_image"
-            android:text="Empty Inventory"
+            android:layout_centerHorizontal="true"
+            android:text="@string/empty_inventory_text"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content" />
 
